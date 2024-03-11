@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <form>
+      <select id="select-filetype">
+        <option value="apartments">apartments</option>
+        <option value="customers">customers</option>
+        <option value="contracts">contracts</option>
+      </select>
+      <input type="file" multiple accept=".csv" onChange="onInputFile" />
+      <button type="submit">Submit</button>
+    </form>
+    <p id="out"></p>
+    <template>
+      <h3>File name</h3>
+      <br />
+      <p class="txt-file-name"></p>
+    </template>
+    <script>
+      let file = [];
+
+      function onInputFile(e) {
+        file = e.target.files;
+      }
+
+      document.addEventListener("DOMContentLoaded", () => {
+        let form = document.getElementsByTagName("form")[0];
+
+        form.addEventListener("submit", (e) => {
+          e.preventDefault();
+
+          onSubmit();
+        });
+      });
+
+      async function onSubmit() {
+        const selectbox = document.getElementById("select-filetype");
+        const filetype = selectbox.value;
+
+        let req_url = "http://127.0.0.1:9090/" + filetype + "/import";
+
+        const body = JSON.stringify(file);
+        const response = await fetch(req_url, { method: "POST", body: body });
+
+        let out = document.getElementById("out");
+        out.innerHTML = response;
+        console.log(response);
+      }
+    </script>
+  </body>
+</html>
